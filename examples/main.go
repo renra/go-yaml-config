@@ -1,10 +1,3 @@
-# Go Yaml Config
-
-A tool that knows how to read multiple yaml files and override them with environment variables.
-
-## Usage
-
-```go
 package main
 
 import (
@@ -62,4 +55,3 @@ func main() {
     fmt.Println(err)
   }
 }
-```
