@@ -6,5 +6,7 @@ dep:
 example:
 	go run ${SOURCES}/examples/main.go
 
+.PHONY: test
 .DEFAULT_GOAL := test
-test: example
+test:
+	go test ./test... -count 1 -v
