@@ -3,8 +3,13 @@ SOURCES=./
 dep:
 	dep init
 
-example:
-	go run ${SOURCES}/examples/main.go
+non_panicking_example:
+	go run ${SOURCES}/examples/non_panicking/main.go
+
+panicking_example:
+	go run ${SOURCES}/examples/panicking/main.go
+
+examples: non_panicking_example panicking_example
 
 .PHONY: test
 .DEFAULT_GOAL := test

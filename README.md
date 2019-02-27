@@ -88,3 +88,5 @@ func main() {
   }
 }
 ```
+
+If you're tired of handling errors and are sure that you don't want to continue your program's execution after encountering an error, you can use the `P` functions to panic right away. Concretely they are: `LoadP`, `LoadSectionP`, `GetP` and `GetStringP`.

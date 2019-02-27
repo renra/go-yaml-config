@@ -26,6 +26,16 @@ func (c *Config) Get(key string) (interface{}, error) {
   }
 }
 
+func (c *Config) GetP(key string) interface{} {
+  v, err := c.Get(key)
+
+  if err != nil {
+    panic(err)
+  }
+
+  return v
+}
+
 func (c *Config) GetString(key string) (string, error) {
   value, e := c.Get(key)
 
@@ -34,6 +44,16 @@ func (c *Config) GetString(key string) (string, error) {
   }
 
   return fmt.Sprintf("%v", value), e
+}
+
+func (c *Config) GetStringP(key string) string {
+  v, err := c.GetString(key)
+
+  if err != nil {
+    panic(err)
+  }
+
+  return v
 }
 
 func (this *Config) Merge(that *Config) *Config {
@@ -79,6 +99,16 @@ func Load(path string) (*Config, error) {
   }
 }
 
+func LoadP(path string) *Config {
+  c, err := Load(path)
+
+  if err != nil {
+    panic(err)
+  }
+
+  return c
+}
+
 func LoadSection(path string, section string) (*Config, error) {
   configData, err := loadConfigDataWithSubSection(path, section)
 
@@ -88,6 +118,17 @@ func LoadSection(path string, section string) (*Config, error) {
     return nil, err
   }
 }
+
+func LoadSectionP(path string, section string) *Config {
+  c, err := LoadSection(path, section)
+
+  if err != nil {
+    panic(err)
+  }
+
+  return c
+}
+
 
 // Path is split into two to prevent creating boxes with unnecessary files
 //  for example packs.New("Whatever", "./") would compile all files in the project
