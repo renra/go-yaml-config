@@ -16,18 +16,24 @@ type Config struct {
   Data ConfigData
 }
 
-func (c *Config) Get(key string) interface{} {
-  return c.Data[key]
+func (c *Config) Get(key string) (interface{}, error) {
+  v, found := c.Data[key]
+
+  if found {
+    return v, nil
+  } else {
+    return v, errors.New(fmt.Sprintf("Could not read key: %s", key))
+  }
 }
 
-func (c *Config) GetString(key string) string {
-  value := c.Get(key)
+func (c *Config) GetString(key string) (string, error) {
+  value, e := c.Get(key)
 
   if value == nil {
-    return ""
+    value = ""
   }
 
-  return fmt.Sprintf("%v", value)
+  return fmt.Sprintf("%v", value), e
 }
 
 func (this *Config) Merge(that *Config) *Config {

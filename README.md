@@ -20,30 +20,42 @@ func main() {
 
   mainConfig, _ := config.Load("examples/config.yaml")
 
-  fmt.Println(fmt.Sprintf("Width: %v", mainConfig.Get("width")))
-  fmt.Println(fmt.Sprintf("Height: %v", mainConfig.Get("height")))
+  width, _ := mainConfig.Get("width")
+  height, _ := mainConfig.Get("heigth")
+  fmt.Println(fmt.Sprintf("Width: %v", width))
+  fmt.Println(fmt.Sprintf("Height: %v", height))
 
-  fmt.Println(fmt.Sprintf("Width: %s", mainConfig.GetString("width")))
-  fmt.Println(fmt.Sprintf("Height: %s", mainConfig.GetString("height")))
+  width, _ = mainConfig.GetString("width")
+  height, _ = mainConfig.GetString("heigth")
+  fmt.Println(fmt.Sprintf("Width: %s", width))
+  fmt.Println(fmt.Sprintf("Height: %s", height))
 
   overrides, _ := config.LoadSection("examples/overrides.yaml", "env_vars")
 
-  fmt.Println(fmt.Sprintf("Width: %s", overrides.GetString("width")))
-  fmt.Println(fmt.Sprintf("Height: %s", overrides.GetString("height")))
+  width, _ = overrides.GetString("width")
+  height, _ = overrides.GetString("heigth")
+  fmt.Println(fmt.Sprintf("Width: %s", width))
+  fmt.Println(fmt.Sprintf("Height: %s", height))
 
   mainWithOverrides := mainConfig.Merge(overrides)
 
-  fmt.Println(fmt.Sprintf("Width: %s", mainWithOverrides.GetString("width")))
-  fmt.Println(fmt.Sprintf("Height: %s", mainWithOverrides.GetString("height")))
+  width, _ = mainWithOverrides.GetString("width")
+  height, _ = mainWithOverrides.GetString("heigth")
+  fmt.Println(fmt.Sprintf("Width: %s", width))
+  fmt.Println(fmt.Sprintf("Height: %s", height))
 
   fullConfig := mainWithOverrides.MergeWithEnvVars()
 
-  fmt.Println(fmt.Sprintf("Width: %s", fullConfig.GetString("width")))
-  fmt.Println(fmt.Sprintf("Height: %s", fullConfig.GetString("height")))
+  width, _ = fullConfig.GetString("width")
+  height, _ = fullConfig.GetString("heigth")
+  fmt.Println(fmt.Sprintf("Width: %s", width))
+  fmt.Println(fmt.Sprintf("Height: %s", height))
 
   envVarLowerCased := strings.ToLower(envVar)
-  fmt.Println(fmt.Sprintf("%s: %s", envVarLowerCased, envVarLowerCased))
+  heroName, _ := fullConfig.GetString(envVarLowerCased)
+  fmt.Println(fmt.Sprintf("%s: %s", envVarLowerCased, heroName))
 
+  // Errors when loading files
   _, err := config.Load("non_existing.yaml")
 
   if err != nil {
@@ -57,6 +69,19 @@ func main() {
   }
 
   _, err = config.LoadSection("examples/overrides.yaml", "something_not_there")
+
+  if err != nil {
+    fmt.Println(err)
+  }
+
+  // Errors when reading keys
+  _, err = fullConfig.Get("whatever")
+
+  if err != nil {
+    fmt.Println(err)
+  }
+
+  _, err = fullConfig.GetString("whatever")
 
   if err != nil {
     fmt.Println(err)

@@ -74,31 +74,47 @@ func TestLoadFile(t *testing.T) {
   config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
 
   expectedWidth := fmt.Sprintf("%d", primaryWidth)
-  widthFromConfig := config.GetString("width")
+  widthFromConfig, err := config.GetString("width")
 
   if widthFromConfig != expectedWidth {
     t.Errorf("Expected %s, got %s", expectedWidth, widthFromConfig)
   }
 
+  if err != nil {
+    t.Errorf("Expected to find key: width")
+  }
+
   expectedHeight := fmt.Sprintf("%d", primaryHeight)
-  heightFromConfig := config.GetString("height")
+  heightFromConfig, err := config.GetString("height")
 
   if heightFromConfig != expectedHeight {
     t.Errorf("Expected %s, got %s", expectedHeight, heightFromConfig)
   }
 
+  if err != nil {
+    t.Errorf("Expected to find key: height")
+  }
+
   expectedLength := fmt.Sprintf("%d", primaryLength)
-  lengthFromConfig := config.GetString("length")
+  lengthFromConfig, err := config.GetString("length")
 
   if lengthFromConfig != expectedLength {
     t.Errorf("Expected %s, got %s", expectedLength, lengthFromConfig)
   }
 
+  if err != nil {
+    t.Errorf("Expected to find key: length")
+  }
+
   expectedValue := ""
-  unexistingValue := config.GetString("unexisting")
+  unexistingValue, err := config.GetString("unexisting")
 
   if unexistingValue != expectedValue {
     t.Errorf("Expected %s, got %s", expectedValue, unexistingValue)
+  }
+
+  if err == nil {
+    t.Errorf("Expected not to find key: unexisting")
   }
 }
 
@@ -106,24 +122,36 @@ func TestLoadSection(t *testing.T) {
   config, _ := config.LoadSection(fmt.Sprintf("test/%s", secondaryFileName), section)
 
   expectedWidth := fmt.Sprintf("%d", secondaryWidth)
-  widthFromConfig := config.GetString("width")
+  widthFromConfig, err := config.GetString("width")
 
   if widthFromConfig != expectedWidth {
     t.Errorf("Expected %s, got %s", expectedWidth, widthFromConfig)
   }
 
+  if err != nil {
+    t.Errorf("Expected to find key: width")
+  }
+
   expectedHeight := fmt.Sprintf("%d", secondaryHeight)
-  heightFromConfig := config.GetString("height")
+  heightFromConfig, err := config.GetString("height")
 
   if heightFromConfig != expectedHeight {
     t.Errorf("Expected %s, got %s", expectedHeight, heightFromConfig)
   }
 
+  if err != nil {
+    t.Errorf("Expected to find key: height")
+  }
+
   expectedValue := ""
-  unexistingValue := config.GetString("unexisting")
+  unexistingValue, err := config.GetString("unexisting")
 
   if unexistingValue != expectedValue {
     t.Errorf("Expected %s, got %s", expectedValue, unexistingValue)
+  }
+
+  if err == nil {
+    t.Errorf("Expected not to find key: unexisting")
   }
 }
 
@@ -131,7 +159,7 @@ func TestGet(t *testing.T) {
   config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
 
   expectedValue := numbers
-  valueFromConfig := config.Get("numbers")
+  valueFromConfig, err := config.Get("numbers")
 
   switch valueType := valueFromConfig.(type) {
     case []interface{}:
@@ -145,6 +173,20 @@ func TestGet(t *testing.T) {
     if value != expectedValue[i] {
       t.Errorf("Expected %v at index %v, got %v", expectedValue[i], i, value)
     }
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: length")
+  }
+
+  unexistingValue, err := config.Get("unexisting")
+
+  if unexistingValue != nil {
+    t.Errorf("Expected %v, got %s", nil, unexistingValue)
+  }
+
+  if err == nil {
+    t.Errorf("Expected not to find key: unexisting")
   }
 }
 
@@ -194,31 +236,47 @@ func TestMerge(t *testing.T) {
   config := c1.Merge(c2)
 
   expectedWidth := fmt.Sprintf("%d", secondaryWidth)
-  widthFromConfig := config.GetString("width")
+  widthFromConfig, err := config.GetString("width")
 
   if widthFromConfig != expectedWidth {
     t.Errorf("Expected %s, got %s", expectedWidth, widthFromConfig)
   }
 
+  if err != nil {
+    t.Errorf("Expected to find key: width")
+  }
+
   expectedHeight := fmt.Sprintf("%d", secondaryHeight)
-  heightFromConfig := config.GetString("height")
+  heightFromConfig, err := config.GetString("height")
 
   if heightFromConfig != expectedHeight {
     t.Errorf("Expected %s, got %s", expectedHeight, heightFromConfig)
   }
 
+  if err != nil {
+    t.Errorf("Expected to find key: height")
+  }
+
   expectedLength := fmt.Sprintf("%d", primaryLength)
-  lengthFromConfig := config.GetString("length")
+  lengthFromConfig, err := config.GetString("length")
 
   if lengthFromConfig != expectedLength {
     t.Errorf("Expected %s, got %s", expectedLength, lengthFromConfig)
   }
 
+  if err != nil {
+    t.Errorf("Expected to find key: length")
+  }
+
   expectedValue := ""
-  unexistingValue := config.GetString("unexisting")
+  unexistingValue, err := config.GetString("unexisting")
 
   if unexistingValue != expectedValue {
     t.Errorf("Expected %s, got %s", expectedValue, unexistingValue)
+  }
+
+  if err == nil {
+    t.Errorf("Expected not to find key: unexisting")
   }
 }
 
@@ -227,23 +285,35 @@ func TestMergeWithEnvVars(t *testing.T) {
   config = config.MergeWithEnvVars()
 
   expectedWidth := fmt.Sprintf("%d", primaryWidth)
-  widthFromConfig := config.GetString("width")
+  widthFromConfig, err := config.GetString("width")
 
   if widthFromConfig != expectedWidth {
     t.Errorf("Expected %s, got %s", expectedWidth, widthFromConfig)
   }
 
+  if err != nil {
+    t.Errorf("Expected to find key: width")
+  }
+
   expectedHeight := fmt.Sprintf("%d", tertiaryHeight)
-  heightFromConfig := config.GetString("height")
+  heightFromConfig, err := config.GetString("height")
 
   if heightFromConfig != expectedHeight {
     t.Errorf("Expected %s, got %s", expectedHeight, heightFromConfig)
   }
 
+  if err != nil {
+    t.Errorf("Expected to find key: height")
+  }
+
   expectedHeroName := heroName
-  heroNameFromConfig := config.GetString("hero_name")
+  heroNameFromConfig, err := config.GetString("hero_name")
 
   if heroNameFromConfig != expectedHeroName {
     t.Errorf("Expected %s, got %s", expectedHeroName, heroNameFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: hero_name")
   }
 }

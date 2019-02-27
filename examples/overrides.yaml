@@ -2,4 +2,4 @@ foo:
   bar: 'bar'
 
 env_vars:
-  height: 400
+  heigth: 400
