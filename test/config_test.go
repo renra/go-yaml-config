@@ -70,7 +70,7 @@ func TestMain(m *testing.M) {
   os.Exit(code)
 }
 
-func TestLoadFile(t *testing.T) {
+func TestLoad(t *testing.T) {
   config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
 
   expectedWidth := fmt.Sprintf("%d", primaryWidth)
@@ -148,41 +148,6 @@ func TestLoadSection(t *testing.T) {
 
   if unexistingValue != expectedValue {
     t.Errorf("Expected %s, got %s", expectedValue, unexistingValue)
-  }
-
-  if err == nil {
-    t.Errorf("Expected not to find key: unexisting")
-  }
-}
-
-func TestGet(t *testing.T) {
-  config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
-
-  expectedValue := numbers
-  valueFromConfig, err := config.Get("numbers")
-
-  switch valueType := valueFromConfig.(type) {
-    case []interface{}:
-    default:
-      t.Errorf("Expected type []interface{}, got %v", valueType)
-  }
-
-  retypedValueFromConfig := valueFromConfig.([]interface{})
-
-  for i, value := range retypedValueFromConfig {
-    if value != expectedValue[i] {
-      t.Errorf("Expected %v at index %v, got %v", expectedValue[i], i, value)
-    }
-  }
-
-  if err != nil {
-    t.Errorf("Expected to find key: length")
-  }
-
-  unexistingValue, err := config.Get("unexisting")
-
-  if unexistingValue != nil {
-    t.Errorf("Expected %v, got %s", nil, unexistingValue)
   }
 
   if err == nil {
@@ -316,4 +281,208 @@ func TestMergeWithEnvVars(t *testing.T) {
   if err != nil {
     t.Errorf("Expected to find key: hero_name")
   }
+}
+
+func TestGet(t *testing.T) {
+  config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
+
+  expectedValue := numbers
+  valueFromConfig, err := config.Get("numbers")
+
+  switch valueType := valueFromConfig.(type) {
+    case []interface{}:
+    default:
+      t.Errorf("Expected type []interface{}, got %v", valueType)
+  }
+
+  retypedValueFromConfig := valueFromConfig.([]interface{})
+
+  for i, value := range retypedValueFromConfig {
+    if value != expectedValue[i] {
+      t.Errorf("Expected %v at index %v, got %v", expectedValue[i], i, value)
+    }
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: numbers")
+  }
+}
+
+func TestLoadP(t *testing.T) {
+  config := config.LoadP(fmt.Sprintf("test/%s", mainFileName))
+
+  expectedWidth := fmt.Sprintf("%d", primaryWidth)
+  widthFromConfig, err := config.GetString("width")
+
+  if widthFromConfig != expectedWidth {
+    t.Errorf("Expected %s, got %s", expectedWidth, widthFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: width")
+  }
+
+  expectedHeight := fmt.Sprintf("%d", primaryHeight)
+  heightFromConfig, err := config.GetString("height")
+
+  if heightFromConfig != expectedHeight {
+    t.Errorf("Expected %s, got %s", expectedHeight, heightFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: height")
+  }
+
+  expectedLength := fmt.Sprintf("%d", primaryLength)
+  lengthFromConfig, err := config.GetString("length")
+
+  if lengthFromConfig != expectedLength {
+    t.Errorf("Expected %s, got %s", expectedLength, lengthFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: length")
+  }
+
+  expectedValue := ""
+  unexistingValue, err := config.GetString("unexisting")
+
+  if unexistingValue != expectedValue {
+    t.Errorf("Expected %s, got %s", expectedValue, unexistingValue)
+  }
+
+  if err == nil {
+    t.Errorf("Expected not to find key: unexisting")
+  }
+}
+
+func TestLoadSectionP(t *testing.T) {
+  config := config.LoadSectionP(fmt.Sprintf("test/%s", secondaryFileName), section)
+
+  expectedWidth := fmt.Sprintf("%d", secondaryWidth)
+  widthFromConfig, err := config.GetString("width")
+
+  if widthFromConfig != expectedWidth {
+    t.Errorf("Expected %s, got %s", expectedWidth, widthFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: width")
+  }
+
+  expectedHeight := fmt.Sprintf("%d", secondaryHeight)
+  heightFromConfig, err := config.GetString("height")
+
+  if heightFromConfig != expectedHeight {
+    t.Errorf("Expected %s, got %s", expectedHeight, heightFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: height")
+  }
+
+  expectedValue := ""
+  unexistingValue, err := config.GetString("unexisting")
+
+  if unexistingValue != expectedValue {
+    t.Errorf("Expected %s, got %s", expectedValue, unexistingValue)
+  }
+
+  if err == nil {
+    t.Errorf("Expected not to find key: unexisting")
+  }
+}
+
+func TestLoadPUnexistingFile(t *testing.T) {
+  defer func(){
+    r := recover()
+
+    if r == nil {
+      t.Errorf("Expected to be recovering from a panic here")
+    }
+  }()
+
+  config.LoadP("whatever.yaml")
+}
+
+func TestLoadSectionPUnexistingFile(t *testing.T) {
+  defer func(){
+    r := recover()
+
+    if r == nil {
+      t.Errorf("Expected to be recovering from a panic here")
+    }
+  }()
+
+  config.LoadSectionP("whatever.yaml", "whatever")
+}
+
+func TestLoadSectionPUnexistingSection(t *testing.T) {
+  defer func(){
+    r := recover()
+
+    if r == nil {
+      t.Errorf("Expected to be recovering from a panic here")
+    }
+  }()
+
+  config.LoadSectionP(secondaryFileName, "whatever")
+}
+
+func TestGetP(t *testing.T) {
+  config := config.LoadP(fmt.Sprintf("test/%s", mainFileName))
+
+  expectedValue := numbers
+  valueFromConfig := config.GetP("numbers")
+
+  switch valueType := valueFromConfig.(type) {
+    case []interface{}:
+    default:
+      t.Errorf("Expected type []interface{}, got %v", valueType)
+  }
+
+  retypedValueFromConfig := valueFromConfig.([]interface{})
+
+  for i, value := range retypedValueFromConfig {
+    if value != expectedValue[i] {
+      t.Errorf("Expected %v at index %v, got %v", expectedValue[i], i, value)
+    }
+  }
+}
+
+func TestGetPUnexistingKey(t *testing.T) {
+  defer func(){
+    r := recover()
+
+    if r == nil {
+      t.Errorf("Expected to be recovering from a panic here")
+    }
+  }()
+
+  config := config.LoadP(fmt.Sprintf("test/%s", mainFileName))
+  config.GetP("whatever")
+}
+
+func TestGetStringP(t *testing.T) {
+  config := config.LoadP(fmt.Sprintf("test/%s", mainFileName))
+
+  expectedWidth := fmt.Sprintf("%d", primaryWidth)
+  widthFromConfig := config.GetStringP("width")
+
+  if widthFromConfig != expectedWidth {
+    t.Errorf("Expected %s, got %s", expectedWidth, widthFromConfig)
+  }
+}
+
+func TestGetStringPUnexistingKey(t *testing.T) {
+  defer func(){
+    r := recover()
+
+    if r == nil {
+      t.Errorf("Expected to be recovering from a panic here")
+    }
+  }()
+
+  config := config.LoadP(fmt.Sprintf("test/%s", mainFileName))
+  config.GetStringP("whatever")
 }
