@@ -486,3 +486,53 @@ func TestGetStringPUnexistingKey(t *testing.T) {
   config := config.LoadP(fmt.Sprintf("test/%s", mainFileName))
   config.GetStringP("whatever")
 }
+
+func TestGetInt(t *testing.T) {
+  config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
+
+  expectedWidth := primaryWidth
+  widthFromConfig, err := config.GetInt("width")
+
+  if widthFromConfig != expectedWidth {
+    t.Errorf("Expected %d, got %d", expectedWidth, widthFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: width")
+  }
+
+  expectedWidth = 0
+  widthFromConfig, err = config.GetInt("unexisting_width")
+
+  if widthFromConfig != expectedWidth {
+    t.Errorf("Expected %d, got %d", expectedWidth, widthFromConfig)
+  }
+
+  if err == nil {
+    t.Errorf("Expected to see error here")
+  }
+}
+
+func TestGetIntP(t *testing.T) {
+  config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
+
+  expectedWidth := primaryWidth
+  widthFromConfig := config.GetIntP("width")
+
+  if widthFromConfig != expectedWidth {
+    t.Errorf("Expected %d, got %d", expectedWidth, widthFromConfig)
+  }
+}
+
+func TestGetIntPUnexistingKey(t *testing.T) {
+  defer func(){
+    r := recover()
+
+    if r == nil {
+      t.Errorf("Expected to be recovering from a panic here")
+    }
+  }()
+
+  config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
+  config.GetIntP("unexisting_width")
+}
