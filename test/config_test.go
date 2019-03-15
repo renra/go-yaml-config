@@ -11,7 +11,7 @@ import (
 
 var mainFileName string = "./mainFile.yaml"
 var primaryWidth int = 200
-var primaryHeight int = 200
+var primaryHeight float64 = 200.5
 var primaryLength int = 200
 var numbers [3]string = [3]string{"one", "two", "three"}
 
@@ -84,7 +84,7 @@ func TestLoad(t *testing.T) {
     t.Errorf("Expected to find key: width")
   }
 
-  expectedHeight := fmt.Sprintf("%d", primaryHeight)
+  expectedHeight := fmt.Sprintf("%.1f", primaryHeight)
   heightFromConfig, err := config.GetString("height")
 
   if heightFromConfig != expectedHeight {
@@ -322,7 +322,7 @@ func TestLoadP(t *testing.T) {
     t.Errorf("Expected to find key: width")
   }
 
-  expectedHeight := fmt.Sprintf("%d", primaryHeight)
+  expectedHeight := fmt.Sprintf("%.1f", primaryHeight)
   heightFromConfig, err := config.GetString("height")
 
   if heightFromConfig != expectedHeight {
@@ -535,4 +535,54 @@ func TestGetIntPUnexistingKey(t *testing.T) {
 
   config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
   config.GetIntP("unexisting_width")
+}
+
+func TestGetFloat(t *testing.T) {
+  config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
+
+  expectedHeight := primaryHeight
+  heightFromConfig, err := config.GetFloat("height")
+
+  if heightFromConfig != expectedHeight {
+    t.Errorf("Expected %f, got %f", expectedHeight, heightFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: width")
+  }
+
+  expectedHeight = 0
+  heightFromConfig, err = config.GetFloat("unexisting_height")
+
+  if heightFromConfig != expectedHeight {
+    t.Errorf("Expected %f, got %f", expectedHeight, heightFromConfig)
+  }
+
+  if err == nil {
+    t.Errorf("Expected to see error here")
+  }
+}
+
+func TestGetFloatP(t *testing.T) {
+  config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
+
+  expectedHeight := primaryHeight
+  heightFromConfig := config.GetFloatP("height")
+
+  if heightFromConfig != expectedHeight {
+    t.Errorf("Expected %f, got %f", expectedHeight, heightFromConfig)
+  }
+}
+
+func TestGetFloatPUnexistingKey(t *testing.T) {
+  defer func(){
+    r := recover()
+
+    if r == nil {
+      t.Errorf("Expected to be recovering from a panic here")
+    }
+  }()
+
+  config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
+  config.GetFloatP("unexisting_height")
 }

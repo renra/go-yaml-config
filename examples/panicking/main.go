@@ -24,9 +24,9 @@ func main() {
   fmt.Println(fmt.Sprintf("Height: %s", height))
 
   width = mainConfig.GetIntP("width")
-  height = mainConfig.GetIntP("heigth")
+  height = mainConfig.GetFloatP("heigth")
   fmt.Println(fmt.Sprintf("Width: %d", width))
-  fmt.Println(fmt.Sprintf("Height: %d", height))
+  fmt.Println(fmt.Sprintf("Height: %f", height))
 
   overrides := config.LoadSectionP("examples/overrides.yaml", "env_vars")
 

@@ -9,6 +9,7 @@ non_panicking_example:
 panicking_example:
 	go run ${SOURCES}/examples/panicking/main.go
 
+.PHONY: examples
 examples: non_panicking_example panicking_example
 
 .PHONY: test
