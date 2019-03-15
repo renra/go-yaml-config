@@ -33,6 +33,10 @@
   name = "gopkg.in/yaml.v2"
   version = "2.2.2"
 
+[[constraint]]
+  name = "github.com/renra/go-errtrace"
+  version = "1.0.0"
+
 [prune]
   go-tests = true
   unused-packages = true

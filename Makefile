@@ -1,7 +1,7 @@
 SOURCES=./
 
 dep:
-	dep init
+	dep ensure
 
 non_panicking_example:
 	go run ${SOURCES}/examples/non_panicking/main.go
