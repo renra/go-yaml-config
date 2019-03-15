@@ -90,3 +90,9 @@ func main() {
 ```
 
 If you're tired of handling errors and are sure that you don't want to continue your program's execution after encountering an error, you can use the `P` functions to panic right away. Concretely they are: `LoadP`, `LoadSectionP`, `GetP` and `GetStringP`.
+
+Note that files are loaded via packr so you will need to use it to compile your program.
+
+### About types
+
+When you use `Get` it returns `interface{}` and you can type-assert it to anything you want. I find it's easiest to use `GetString` though, especially together with `MergeWithEnvVars` because all env vars are strings anyway so it helps to avoid the problem working with values of different types depending on whether they are overridden or not. You can always use `strconv` on the resulting value.
