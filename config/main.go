@@ -3,6 +3,7 @@ package config
 import (
   "os"
   "fmt"
+  "strconv"
   "strings"
   "path/filepath"
   "errors"
@@ -54,6 +55,26 @@ func (c *Config) GetStringP(key string) string {
   }
 
   return v
+}
+
+func (c *Config) GetInt(key string) (int, error) {
+  value, e := c.GetString(key)
+
+  if e != nil {
+    return 0, e
+  }
+
+  return strconv.Atoi(value)
+}
+
+func (c *Config) GetIntP(key string) int {
+  value, e := c.GetInt(key)
+
+  if e != nil {
+    panic(e)
+  }
+
+  return value
 }
 
 func (this *Config) Merge(that *Config) *Config {
