@@ -23,6 +23,11 @@ func main() {
   fmt.Println(fmt.Sprintf("Width: %s", width))
   fmt.Println(fmt.Sprintf("Height: %s", height))
 
+  width = mainConfig.GetIntP("width")
+  height = mainConfig.GetIntP("heigth")
+  fmt.Println(fmt.Sprintf("Width: %d", width))
+  fmt.Println(fmt.Sprintf("Height: %d", height))
+
   overrides := config.LoadSectionP("examples/overrides.yaml", "env_vars")
 
   height = overrides.GetStringP("heigth")
@@ -46,5 +51,3 @@ func main() {
   heroName := fullConfig.GetStringP(envVarLowerCased)
   fmt.Println(fmt.Sprintf("%s: %s", envVarLowerCased, heroName))
 }
-
-

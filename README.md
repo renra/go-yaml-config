@@ -37,6 +37,11 @@ func main() {
   fmt.Println(fmt.Sprintf("Width: %s", width))
   fmt.Println(fmt.Sprintf("Height: %s", height))
 
+  width, _ = mainConfig.GetInt("width")
+  height, _ = mainConfig.GetInt("heigth")
+  fmt.Println(fmt.Sprintf("Width: %d", width))
+  fmt.Println(fmt.Sprintf("Height: %d", height))
+
   mainWithOverrides := mainConfig.Merge(overrides)
 
   width, _ = mainWithOverrides.GetString("width")
