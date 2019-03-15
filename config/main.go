@@ -77,6 +77,26 @@ func (c *Config) GetIntP(key string) int {
   return value
 }
 
+func (c *Config) GetFloat(key string) (float64, error) {
+  value, e := c.GetString(key)
+
+  if e != nil {
+    return 0, e
+  }
+
+  return strconv.ParseFloat(value, 64)
+}
+
+func (c *Config) GetFloatP(key string) float64 {
+  value, e := c.GetFloat(key)
+
+  if e != nil {
+    panic(e)
+  }
+
+  return value
+}
+
 func (this *Config) Merge(that *Config) *Config {
   data := ConfigData{}
 
