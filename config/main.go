@@ -6,8 +6,8 @@ import (
   "strconv"
   "strings"
   "path/filepath"
-  "errors"
   "gopkg.in/yaml.v2"
+  "github.com/renra/go-errtrace/errtrace"
   "github.com/gobuffalo/packr/v2"
 )
 
@@ -17,13 +17,13 @@ type Config struct {
   Data ConfigData
 }
 
-func (c *Config) Get(key string) (interface{}, error) {
+func (c *Config) Get(key string) (interface{}, *errtrace.Error) {
   v, found := c.Data[key]
 
   if found {
     return v, nil
   } else {
-    return v, errors.New(fmt.Sprintf("Could not read key: %s", key))
+    return v, errtrace.New(fmt.Sprintf("Could not read key: %s", key))
   }
 }
 
@@ -37,7 +37,7 @@ func (c *Config) GetP(key string) interface{} {
   return v
 }
 
-func (c *Config) GetString(key string) (string, error) {
+func (c *Config) GetString(key string) (string, *errtrace.Error) {
   value, e := c.Get(key)
 
   if value == nil {
@@ -57,14 +57,16 @@ func (c *Config) GetStringP(key string) string {
   return v
 }
 
-func (c *Config) GetInt(key string) (int, error) {
+func (c *Config) GetInt(key string) (int, *errtrace.Error) {
   value, e := c.GetString(key)
 
   if e != nil {
     return 0, e
   }
 
-  return strconv.Atoi(value)
+  valueInt, err := strconv.Atoi(value)
+
+  return valueInt, errtrace.Wrap(err)
 }
 
 func (c *Config) GetIntP(key string) int {
@@ -77,14 +79,16 @@ func (c *Config) GetIntP(key string) int {
   return value
 }
 
-func (c *Config) GetFloat(key string) (float64, error) {
+func (c *Config) GetFloat(key string) (float64, *errtrace.Error) {
   value, e := c.GetString(key)
 
   if e != nil {
     return 0, e
   }
 
-  return strconv.ParseFloat(value, 64)
+  valueFloat, err := strconv.ParseFloat(value, 64)
+
+  return valueFloat, errtrace.Wrap(err)
 }
 
 func (c *Config) GetFloatP(key string) float64 {
@@ -97,14 +101,16 @@ func (c *Config) GetFloatP(key string) float64 {
   return value
 }
 
-func (c *Config) GetBool(key string) (bool, error) {
+func (c *Config) GetBool(key string) (bool, *errtrace.Error) {
   value, e := c.GetString(key)
 
   if e != nil {
     return false, e
   }
 
-  return strconv.ParseBool(value)
+  valueBool, err := strconv.ParseBool(value)
+
+  return valueBool, errtrace.Wrap(err)
 }
 
 func (c *Config) GetBoolP(key string) bool {
@@ -150,7 +156,7 @@ func (c *Config) MergeWithEnvVars() *Config {
   return &Config{Data: data}
 }
 
-func Load(path string) (*Config, error) {
+func Load(path string) (*Config, *errtrace.Error) {
   configData, err := loadConfigData(path)
 
   if configData != nil {
@@ -170,7 +176,7 @@ func LoadP(path string) *Config {
   return c
 }
 
-func LoadSection(path string, section string) (*Config, error) {
+func LoadSection(path string, section string) (*Config, *errtrace.Error) {
   configData, err := loadConfigDataWithSubSection(path, section)
 
   if configData != nil {
@@ -194,7 +200,7 @@ func LoadSectionP(path string, section string) *Config {
 // Path is split into two to prevent creating boxes with unnecessary files
 //  for example packs.New("Whatever", "./") would compile all files in the project
 //  and include it in the binary
-func loadConfigData(path string) (*ConfigData, error) {
+func loadConfigData(path string) (*ConfigData, *errtrace.Error) {
   pathToDir := filepath.Dir(path)
   fileName := filepath.Base(path)
 
@@ -203,36 +209,36 @@ func loadConfigData(path string) (*ConfigData, error) {
   configInYaml, err := box.FindString(fileName)
 
   if err != nil {
-    return nil, err
+    return nil, errtrace.Wrap(err)
   }
 
   configData := ConfigData{}
   err = yaml.Unmarshal([]byte(configInYaml), &configData)
 
   if err != nil {
-    return nil, err
+    return nil, errtrace.Wrap(err)
   }
 
   return &configData, nil
 }
 
-func loadConfigDataWithSubSection(path string, subSection string) (*ConfigData, error) {
+func loadConfigDataWithSubSection(path string, subSection string) (*ConfigData, *errtrace.Error) {
   configData, err := loadConfigData(path)
 
   if err == nil {
     return configData.SubSection(subSection)
   } else {
-    return nil, err
+    return nil, errtrace.Wrap(err)
   }
 }
 
-func (c *ConfigData) SubSection(name string) (*ConfigData, error) {
+func (c *ConfigData) SubSection(name string) (*ConfigData, *errtrace.Error) {
   result := make(ConfigData)
 
   subSection, ok := (*c)[name]
 
   if ok == false {
-    return nil, errors.New(fmt.Sprintf("Could not read sub-section: %s", name))
+    return nil, errtrace.New(fmt.Sprintf("Could not read sub-section: %s", name))
   }
 
   if subSection == nil {
