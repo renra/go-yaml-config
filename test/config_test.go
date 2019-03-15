@@ -14,6 +14,8 @@ var primaryWidth int = 200
 var primaryHeight float64 = 200.5
 var primaryLength int = 200
 var numbers [3]string = [3]string{"one", "two", "three"}
+var primaryIsAwesome bool = false
+var primaryIsTerrible bool = true
 
 var secondaryFileName string = "./secondaryFile.yaml"
 var secondaryWidth int = 400
@@ -22,6 +24,8 @@ var secondaryHeight int = 400
 var tertiaryHeight int = 600
 var heroName string = "Jon"
 var section string = "env_vars"
+var tertiaryIsAwesome bool = true
+var tertiaryIsTerrible bool = false
 
 func writeYaml(path string, data map[string]interface{}) {
   contents, err := yaml.Marshal(&data)
@@ -43,6 +47,8 @@ func setup() {
     "height": primaryHeight,
     "length": primaryLength,
     "numbers": numbers,
+    "is_awesome": primaryIsAwesome,
+    "is_terrible": primaryIsTerrible,
   })
 
   writeYaml(secondaryFileName, map[string]interface{}{
@@ -54,6 +60,9 @@ func setup() {
 
   os.Setenv("HERO_NAME", heroName)
   os.Setenv("HEIGHT", fmt.Sprintf("%d", tertiaryHeight))
+
+  os.Setenv("IS_AWESOME", fmt.Sprintf("%t", tertiaryIsAwesome))
+  os.Setenv("IS_TERRIBLE", fmt.Sprintf("%t", tertiaryIsTerrible))
 }
 
 func teardown() {
@@ -104,6 +113,28 @@ func TestLoad(t *testing.T) {
 
   if err != nil {
     t.Errorf("Expected to find key: length")
+  }
+
+  expectedIsAwesome := fmt.Sprintf("%t", primaryIsAwesome)
+  isAwesomeFromConfig, err := config.GetString("is_awesome")
+
+  if isAwesomeFromConfig != expectedIsAwesome {
+    t.Errorf("Expected %s, got %s", expectedIsAwesome, isAwesomeFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: is_awesome")
+  }
+
+  expectedIsTerrible := fmt.Sprintf("%t", primaryIsTerrible)
+  isTerribleFromConfig, err := config.GetString("is_terrible")
+
+  if isTerribleFromConfig != expectedIsTerrible {
+    t.Errorf("Expected %s, got %s", expectedIsTerrible, isTerribleFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: is_terrible")
   }
 
   expectedValue := ""
@@ -233,6 +264,28 @@ func TestMerge(t *testing.T) {
     t.Errorf("Expected to find key: length")
   }
 
+  expectedIsAwesome := fmt.Sprintf("%t", primaryIsAwesome)
+  isAwesomeFromConfig, err := config.GetString("is_awesome")
+
+  if isAwesomeFromConfig != expectedIsAwesome {
+    t.Errorf("Expected %s, got %s", expectedIsAwesome, isAwesomeFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: is_awesome")
+  }
+
+  expectedIsTerrible := fmt.Sprintf("%t", primaryIsTerrible)
+  isTerribleFromConfig, err := config.GetString("is_terrible")
+
+  if isTerribleFromConfig != expectedIsTerrible {
+    t.Errorf("Expected %s, got %s", expectedIsTerrible, isTerribleFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: is_terrible")
+  }
+
   expectedValue := ""
   unexistingValue, err := config.GetString("unexisting")
 
@@ -280,6 +333,28 @@ func TestMergeWithEnvVars(t *testing.T) {
 
   if err != nil {
     t.Errorf("Expected to find key: hero_name")
+  }
+
+  expectedIsAwesome := fmt.Sprintf("%t", tertiaryIsAwesome)
+  isAwesomeFromConfig, err := config.GetString("is_awesome")
+
+  if isAwesomeFromConfig != expectedIsAwesome {
+    t.Errorf("Expected %s, got %s", expectedIsAwesome, isAwesomeFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: is_awesome")
+  }
+
+  expectedIsTerrible := fmt.Sprintf("%t", tertiaryIsTerrible)
+  isTerribleFromConfig, err := config.GetString("is_terrible")
+
+  if isTerribleFromConfig != expectedIsTerrible {
+    t.Errorf("Expected %s, got %s", expectedIsTerrible, isTerribleFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: is_terrible")
   }
 }
 
@@ -342,6 +417,28 @@ func TestLoadP(t *testing.T) {
 
   if err != nil {
     t.Errorf("Expected to find key: length")
+  }
+
+  expectedIsAwesome := fmt.Sprintf("%t", primaryIsAwesome)
+  isAwesomeFromConfig, err := config.GetString("is_awesome")
+
+  if isAwesomeFromConfig != expectedIsAwesome {
+    t.Errorf("Expected %s, got %s", expectedIsAwesome, isAwesomeFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: is_awesome")
+  }
+
+  expectedIsTerrible := fmt.Sprintf("%t", primaryIsTerrible)
+  isTerribleFromConfig, err := config.GetString("is_terrible")
+
+  if isTerribleFromConfig != expectedIsTerrible {
+    t.Errorf("Expected %s, got %s", expectedIsTerrible, isTerribleFromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: is_terrible")
   }
 
   expectedValue := ""
@@ -585,4 +682,57 @@ func TestGetFloatPUnexistingKey(t *testing.T) {
 
   config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
   config.GetFloatP("unexisting_height")
+}
+
+func TestGetBool(t *testing.T) {
+  config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
+  config = config.MergeWithEnvVars()
+
+  expected := tertiaryIsAwesome
+  fromConfig, err := config.GetBool("is_awesome")
+
+  if fromConfig != expected {
+    t.Errorf("Expected %t, got %t", expected, fromConfig)
+  }
+
+  if err != nil {
+    t.Errorf("Expected to find key: is_awesome")
+  }
+
+  expected = false
+  fromConfig, err = config.GetBool("unexisting_flag")
+
+  if fromConfig != expected {
+    t.Errorf("Expected %t, got %t", expected, fromConfig)
+  }
+
+  if err == nil {
+    t.Errorf("Expected to see error here")
+  }
+}
+
+func TestGetBoolP(t *testing.T) {
+  config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
+  config = config.MergeWithEnvVars()
+
+  expected := tertiaryIsTerrible
+  fromConfig := config.GetBoolP("is_terrible")
+
+  if fromConfig != expected {
+    t.Errorf("Expected %t, got %t", expected, fromConfig)
+  }
+}
+
+func TestGetBoolPUnexistingKey(t *testing.T) {
+  defer func() {
+    r := recover()
+
+    if r == nil {
+      t.Errorf("Expected to be recovering from a panic here")
+    }
+  }()
+  config, _ := config.Load(fmt.Sprintf("test/%s", mainFileName))
+  config = config.MergeWithEnvVars()
+
+  config.GetBoolP("is_whatever")
 }
