@@ -42,12 +42,18 @@ func main() {
   fmt.Println(fmt.Sprintf("Width: %d", width))
   fmt.Println(fmt.Sprintf("Height: %f", height))
 
+  isAwesome, _ := mainConfig.GetBool("is_awesome")
+  fmt.Println(fmt.Sprintf("IsAwesome: %t", isAwesome))
+
   mainWithOverrides := mainConfig.Merge(overrides)
 
   width, _ = mainWithOverrides.GetString("width")
   height, _ = mainWithOverrides.GetString("heigth")
   fmt.Println(fmt.Sprintf("Width: %s", width))
   fmt.Println(fmt.Sprintf("Height: %s", height))
+
+  isAwesome, _ = overrides.GetBool("is_awesome")
+  fmt.Println(fmt.Sprintf("IsAwesome: %t", isAwesome))
 
   fullConfig := mainWithOverrides.MergeWithEnvVars()
 
@@ -99,6 +105,12 @@ func main() {
   }
 
   _, err = fullConfig.GetFloat("whatever")
+
+  if err != nil {
+    fmt.Println(err)
+  }
+
+  _, err = fullConfig.GetBool("whatever")
 
   if err != nil {
     fmt.Println(err)

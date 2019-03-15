@@ -3,3 +3,4 @@ foo:
 
 env_vars:
   heigth: 400
+  is_awesome: 'false'

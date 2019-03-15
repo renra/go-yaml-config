@@ -97,6 +97,26 @@ func (c *Config) GetFloatP(key string) float64 {
   return value
 }
 
+func (c *Config) GetBool(key string) (bool, error) {
+  value, e := c.GetString(key)
+
+  if e != nil {
+    return false, e
+  }
+
+  return strconv.ParseBool(value)
+}
+
+func (c *Config) GetBoolP(key string) bool {
+  value, e := c.GetBool(key)
+
+  if e != nil {
+    panic(e)
+  }
+
+  return value
+}
+
 func (this *Config) Merge(that *Config) *Config {
   data := ConfigData{}
 
