@@ -219,7 +219,14 @@ func loadConfigData(path string) (*ConfigData, *errtrace.Error) {
     return nil, errtrace.Wrap(err)
   }
 
-  return &configData, nil
+  configDataDowncased := make(ConfigData, len(configData))
+
+  for k, v := range configData {
+    key := strings.ToLower(k)
+    configDataDowncased[key] = v
+  }
+
+  return &configDataDowncased, nil
 }
 
 func loadConfigDataWithSubSection(path string, subSection string) (*ConfigData, *errtrace.Error) {
@@ -246,7 +253,8 @@ func (c *ConfigData) SubSection(name string) (*ConfigData, *errtrace.Error) {
   }
 
   for k, v := range subSection.(map[interface{}]interface{}) {
-    result[k.(string)] = v
+    key := strings.ToLower(k.(string))
+    result[key] = v
   }
 
   return &result, nil

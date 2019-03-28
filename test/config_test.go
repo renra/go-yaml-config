@@ -43,7 +43,7 @@ func writeYaml(path string, data map[string]interface{}) {
 
 func setup() {
   writeYaml(mainFileName, map[string]interface{}{
-    "width": primaryWidth,
+    "WIDTH": primaryWidth,
     "height": primaryHeight,
     "length": primaryLength,
     "numbers": numbers,
@@ -54,7 +54,7 @@ func setup() {
   writeYaml(secondaryFileName, map[string]interface{}{
     section: map[string]interface{}{
       "width": secondaryWidth,
-      "height": secondaryHeight,
+      "HEIGHT": secondaryHeight,
     },
   })
 
