@@ -118,10 +118,16 @@ func main() {
 }
 ```
 
+If you need to override any value, there's the `Set` function for you. The value is an `interface{}`.
+
+```go
+config.Set("width", 1000)
+```
+
 If you're tired of handling errors and are sure that you don't want to continue your program's execution after encountering an error, you can use the `P` functions to panic right away. Concretely they are: `LoadP`, `LoadSectionP`, `GetP` and `GetStringP`.
 
 Note that files are loaded via [packr](github.com/gobuffalo/packr/v2) so you will need to use it to compile your program.
 
 ### About types
 
-When you use `Get` it returns `interface{}` and you can type-assert it to anything you want. I find it's easiest to use `GetString` though, especially together with `MergeWithEnvVars` because all env vars are strings anyway so it helps to avoid the problem of working with values of different types depending on whether they are overridden or not. You can always use `strconv` on the resulting value.
+When you use `Get` it returns `interface{}` and you can type-assert it to anything you want. I find it's easiest to use `GetString` though, especially together with `MergeWithEnvVars` because all env vars are strings anyway so it helps to avoid the problem of working with values of different types depending on whether they are overridden or not. You can use functions `GetInt`, `GetFloat` and `GetBool` (and their panicking variants) which use `strconv`, or you can type-convert / type-assert in your custom way.

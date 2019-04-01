@@ -37,6 +37,10 @@ func (c *Config) GetP(key string) interface{} {
   return v
 }
 
+func (c *Config) Set(key string, value interface{}) {
+  c.Data[key] = value
+}
+
 func (c *Config) GetString(key string) (string, *errtrace.Error) {
   value, e := c.Get(key)
 
