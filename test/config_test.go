@@ -490,6 +490,23 @@ func TestLoadSectionP(t *testing.T) {
   }
 }
 
+func TestSet(t *testing.T) {
+  config := config.LoadP(fmt.Sprintf("test/%s", mainFileName))
+
+  expectedValue := -100
+  config.Set("width", expectedValue)
+
+  width, err := config.Get("width")
+
+  if err != nil {
+    t.Errorf("Expected to find key: width")
+  }
+
+  if width.(int) != expectedValue {
+    t.Errorf("Expected %v, got %v", expectedValue, width)
+  }
+}
+
 func TestLoadPUnexistingFile(t *testing.T) {
   defer func(){
     r := recover()
